@@ -1,27 +1,29 @@
-import neural_network as nn
 import matplotlib.pyplot as plt
+import neural_network as nn
 import random
 import time
 import math
+import graphics as g
 
 
 def main():
-    neural_network = nn.NeuralNetwork(2, 4, 1)
+    neural_network = nn.NeuralNetwork(2, 5, 1)
     start_time = time.time()
     plt.title("Training Data Improvement")
     plt.xlabel("Iterations")
     plt.ylabel("Guess")
 
-    L1 = []
-    L2 = []
-    L3 = []
-    L4 = []
+    l1 = []
+    l2 = []
+    l3 = []
+    l4 = []
 
-    # of training iterations
+    # number of training iterations
     itr = 10000
 
-    for i in range(itr):
+    gr = g.Graphics(2, 5, 1)
 
+    for i in range(itr):
         file = open("training_data.txt", "r")
         arr = []
 
@@ -29,30 +31,27 @@ def main():
             str = file.readline()
             str_split = str.split(", ")
             arr.append(str_split)
-
         random.shuffle(arr)
 
         for j in range(4):
             input = [int(arr[j][0]), int(arr[j][1])]
             target = [int(arr[j][2].strip())]
-            neural_network.train(input, target)
+            neural_network.train(input, target, gr)
 
-        #plot points on graph
         if i % 100 == 1:
-            L1.append(neural_network.feed_forward([0, 0]))
-            L2.append(neural_network.feed_forward([1, 1]))
-            L3.append(neural_network.feed_forward([0, 1]))
-            L4.append(neural_network.feed_forward([1, 0]))
-
+            l1.append(neural_network.feed_forward([0, 0]))
+            l2.append(neural_network.feed_forward([1, 1]))
+            l3.append(neural_network.feed_forward([0, 1]))
+            l4.append(neural_network.feed_forward([1, 0]))
         file.close()
 
-        #print progress bar
+        # print progress bar
         print_progress_bar(i + 1, itr, prefix='Progress:', suffix='Complete', length=50)
 
     # calculate and display training time
     display_time(start_time)
 
-    #testing data for the network
+    # testing data for the network
     print("[0, 0]: ", end="")
     print(round(neural_network.feed_forward([0, 0])[0]))
     print("[1, 1]: ", end="")
@@ -62,24 +61,26 @@ def main():
     print("[1, 0]: ", end="")
     print(round(neural_network.feed_forward([1, 0])[0]))
 
-    # display graph
-    plt.plot(L1, "black")
-    plt.plot(L2, "black")
-    plt.plot(L3, "black")
-    plt.plot(L4, "black")
+    # plot points and display graph
+    plt.plot(l1, "black")
+    plt.plot(l2, "black")
+    plt.plot(l3, "black")
+    plt.plot(l4, "black")
     plt.show()
 
 
-#prints the progress bar for training data iterations
+# prints the progress bar for training data iterations
 def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filled_length = int(length * iteration // total)
     bar = fill * filled_length + '-' * (length - filled_length)
     print('\r%s [%s] %s%% %s' % (prefix, bar, percent, suffix), end='')
-    # Print New Line on Complete
+    # Print New line on Complete
     if iteration == total:
         print()
 
+
+# displays the time from start_time to the time the function was called
 def display_time(start_time):
     end_time = time.time()
     time_elapsed = end_time - start_time

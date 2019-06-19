@@ -30,11 +30,12 @@ class NeuralNetwork:
         output = matrix.Matrix.multiply(self.__weights_ho, hidden)
         output.add(self.__bias_o)
         output.map(matrix.Matrix.sigmoid)
+
         return matrix.Matrix.to_array(output)
 
-    def train(self, input_, target_):
+    def train(self, input_, target_, gr):
 
-        # feedforward
+        # feed-forward
         input = matrix.Matrix.from_array(input_)
         hidden = matrix.Matrix.multiply(self.__weights_ih, input)
         hidden.add(self.__bias_h)
@@ -80,3 +81,6 @@ class NeuralNetwork:
 
         # adjust hidden bias
         self.__bias_h.add(hidden_gradient)
+
+        # graphics
+        gr.draw(input, hidden, output, self.__weights_ih, self.__weights_ho)
