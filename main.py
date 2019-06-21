@@ -4,6 +4,7 @@ import random
 import time
 import math
 import graphics as g
+import pygame as pg
 
 
 def main():
@@ -21,6 +22,8 @@ def main():
     # number of training iterations
     itr = 10000
 
+    pg.init()
+    pg.display.set_caption("Neural Network Visualization")
     gr = g.Graphics(2, 5, 1)
 
     for i in range(itr):
@@ -34,9 +37,9 @@ def main():
         random.shuffle(arr)
 
         for j in range(4):
-            input = [int(arr[j][0]), int(arr[j][1])]
+            input_ = [int(arr[j][0]), int(arr[j][1])]
             target = [int(arr[j][2].strip())]
-            neural_network.train(input, target, gr)
+            neural_network.train(input_, target, gr)
 
         if i % 100 == 1:
             l1.append(neural_network.feed_forward([0, 0]))

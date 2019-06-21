@@ -22,22 +22,21 @@ class NeuralNetwork:
         # learning rate
         self.lr = 0.1
 
-    def feed_forward(self, input_):
-        input = matrix.Matrix.from_array(input_)
-        hidden = matrix.Matrix.multiply(self.__weights_ih, input)
+    def feed_forward(self, i):
+        input_ = matrix.Matrix.from_array(i)
+        hidden = matrix.Matrix.multiply(self.__weights_ih, input_)
         hidden.add(self.__bias_h)
         hidden.map(matrix.Matrix.sigmoid)
         output = matrix.Matrix.multiply(self.__weights_ho, hidden)
         output.add(self.__bias_o)
         output.map(matrix.Matrix.sigmoid)
-
         return matrix.Matrix.to_array(output)
 
-    def train(self, input_, target_, gr):
+    def train(self, i, target_, gr):
 
         # feed-forward
-        input = matrix.Matrix.from_array(input_)
-        hidden = matrix.Matrix.multiply(self.__weights_ih, input)
+        input_ = matrix.Matrix.from_array(i)
+        hidden = matrix.Matrix.multiply(self.__weights_ih, input_)
         hidden.add(self.__bias_h)
         hidden.map(matrix.Matrix.sigmoid)
         output = matrix.Matrix.multiply(self.__weights_ho, hidden)
@@ -73,7 +72,7 @@ class NeuralNetwork:
         hidden_gradient.multiply_(self.lr)
 
         # calculate input --> hidden deltas
-        input_t = matrix.Matrix.transpose(input)
+        input_t = matrix.Matrix.transpose(input_)
         weights_ih_deltas = matrix.Matrix.multiply(hidden_gradient, input_t)
 
         # adjust output --> hidden weights
@@ -83,4 +82,4 @@ class NeuralNetwork:
         self.__bias_h.add(hidden_gradient)
 
         # graphics
-        gr.draw(input, hidden, output, self.__weights_ih, self.__weights_ho)
+        gr.draw(input_, hidden, output, self.__weights_ih, self.__weights_ho)
