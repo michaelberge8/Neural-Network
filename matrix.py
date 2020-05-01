@@ -1,6 +1,12 @@
 import random
 import math
 
+'''
+    File name: main.py
+    Author: Michael Berge
+    Date created: 7/19/2018
+    Python Version: 3.8.1
+'''
 
 class Matrix:
     def __init__(self, rows, cols):
@@ -8,8 +14,8 @@ class Matrix:
         self.__cols = cols
         self.__data = [[0 for x in range(cols)] for y in range(rows)]
 
-    # matrix Product (a • b)
-    # return matrix product of matrix m1 and matrix m2
+    # Matrix Product (a • b)
+    # Return matrix product of matrix m1 and matrix m2
     @staticmethod
     def multiply(m1, m2):
         if m1.__cols == m2.__rows:
@@ -25,7 +31,7 @@ class Matrix:
             print("error - conflicting dimensions")
 
     # Hadamard product (a • b)
-    # multiply matrix m or n by self
+    # Multiply matrix m or n by self
     def multiply_(self, m):
         if isinstance(m, Matrix):
             if self.__rows == m.__rows and self.__cols == m.__cols:
@@ -40,7 +46,7 @@ class Matrix:
                     self.__data[i][j] *= m
 
     # Hadamard product (c)
-    # add matrix m or n to self
+    # Add matrix m or n to self
     def add(self, m=None, n=None):
         if m is not None:
             if self.__rows == m.__rows and self.__cols == m.__cols:

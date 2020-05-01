@@ -1,5 +1,11 @@
 import matrix
 
+'''
+    File name: main.py
+    Author: Michael Berge
+    Date created: 7/19/2018
+    Python Version: 3.8.1
+'''
 
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes):
@@ -19,7 +25,7 @@ class NeuralNetwork:
         self.__bias_h.randomize()
         self.__bias_o.randomize()
 
-        # learning rate
+        # Learning rate
         self.lr = 0.1
 
     def feed_forward(self, i):
@@ -33,8 +39,7 @@ class NeuralNetwork:
         return matrix.Matrix.to_array(output)
 
     def train(self, i, target_, gr):
-
-        # feed-forward
+        # Feed-forward
         input_ = matrix.Matrix.from_array(i)
         hidden = matrix.Matrix.multiply(self.__weights_ih, input_)
         hidden.add(self.__bias_h)
@@ -43,43 +48,56 @@ class NeuralNetwork:
         output.add(self.__bias_o)
         output.map(matrix.Matrix.sigmoid)
 
-        # calculate output errors
+        ###################################################################
+        ######################### Backpropagation #########################
+        ###################################################################
+
+        # Calculate output errors
         target = matrix.Matrix.from_array(target_)
         output_errors = matrix.Matrix.subtract(target, output)
 
-        # calculate output gradient
+        # Calculate output gradient
         output_gradient = matrix.Matrix.map_(output, matrix.Matrix.d_sigmoid)
         output_gradient.multiply_(output_errors)
         output_gradient.multiply_(self.lr)
 
-        # calculate hidden --> output deltas
+        ###################################################################
+
+        # Calculate hidden --> output  weight deltas
         hidden_t = matrix.Matrix.transpose(hidden)
         weights_ho_deltas = matrix.Matrix.multiply(output_gradient, hidden_t)
 
-        # adjust hidden --> output weights
+        # Adjust hidden --> output weights
         self.__weights_ho.add(weights_ho_deltas)
 
-        # adjust output bias
+        ###################################################################
+
+        # Adjust output bias
         self.__bias_o.add(output_gradient)
 
-        # calculate hidden layer errors
+        ###################################################################
+
+        # Calculate hidden layer errors
         weights_ho_transpose = matrix.Matrix.transpose(self.__weights_ho)
         hidden_errors = matrix.Matrix.multiply(weights_ho_transpose, output_errors)
-
-        # calculate hidden gradient
+        # Calculate hidden gradient
         hidden_gradient = matrix.Matrix.map_(hidden, matrix.Matrix.d_sigmoid)
         hidden_gradient.multiply_(hidden_errors)
         hidden_gradient.multiply_(self.lr)
 
-        # calculate input --> hidden deltas
+        # Calculate input --> hidden weight deltas
         input_t = matrix.Matrix.transpose(input_)
         weights_ih_deltas = matrix.Matrix.multiply(hidden_gradient, input_t)
 
-        # adjust output --> hidden weights
+        # Adjust output --> hidden weights
         self.__weights_ih.add(weights_ih_deltas)
 
-        # adjust hidden bias
+        ###################################################################
+
+        # Adjust hidden bias
         self.__bias_h.add(hidden_gradient)
 
-        # graphics
+        ###################################################################
+
+        # Graphics
         gr.draw(input_, hidden, output, self.__weights_ih, self.__weights_ho)

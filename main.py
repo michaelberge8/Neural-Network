@@ -4,11 +4,19 @@ import random
 import time
 import math
 import graphics as g
-import pygame as pg
 
+'''
+    File name: main.py
+    Author: Michael Berge
+    Date created: 7/19/2018
+    Python Version: 3.8.1
+'''
 
 def main():
-    neural_network = nn.NeuralNetwork(2, 5, 1)
+    num_i = 2
+    num_h = 5
+    num_o = 1
+    neural_network = nn.NeuralNetwork(num_i, num_h, num_o)
     start_time = time.time()
     plt.title("Training Data Improvement")
     plt.xlabel("Iterations")
@@ -19,20 +27,19 @@ def main():
     l3 = []
     l4 = []
 
-    # number of training iterations
-    itr = 10000
+    # Number of training iterations
+    epoch = 10000
 
-    pg.init()
-    pg.display.set_caption("Neural Network Visualization")
-    gr = g.Graphics(2, 5, 1)
+    # Graphics object
+    gr = g.Graphics(num_i, num_h, num_o)
 
-    for i in range(itr):
+    for i in range(epoch):
         file = open("training_data.txt", "r")
         arr = []
 
         for j in range(4):
-            str = file.readline()
-            str_split = str.split(", ")
+            str_ = file.readline()
+            str_split = str_.split(" ")
             arr.append(str_split)
         random.shuffle(arr)
 
@@ -41,49 +48,49 @@ def main():
             target = [int(arr[j][2].strip())]
             neural_network.train(input_, target, gr)
 
-        if i % 100 == 1:
+        if i % (epoch / 100) == 0:
             l1.append(neural_network.feed_forward([0, 0]))
             l2.append(neural_network.feed_forward([1, 1]))
             l3.append(neural_network.feed_forward([0, 1]))
             l4.append(neural_network.feed_forward([1, 0]))
         file.close()
 
-        # print progress bar
-        print_progress_bar(i + 1, itr, prefix='Progress:', suffix='Complete', length=50)
+        # Print progress bar
+        print_progress_bar(i + 1, epoch, prefix='Progress:', suffix='Complete', length=50)
 
-    # calculate and display training time
+    # Calculate and display training time
     display_time(start_time)
 
     # testing data for the network
-    print("[0, 0]: ", end="")
-    print(round(neural_network.feed_forward([0, 0])[0]))
-    print("[1, 1]: ", end="")
-    print(round(neural_network.feed_forward([1, 1])[0]))
-    print("[0, 1]: ", end="")
-    print(round(neural_network.feed_forward([0, 1])[0]))
-    print("[1, 0]: ", end="")
-    print(round(neural_network.feed_forward([1, 0])[0]))
+    print("[0, 0]: " + str(round(neural_network.feed_forward([0, 0])[0])))
+    print("[1, 1]: " + str(round(neural_network.feed_forward([1, 1])[0])))
+    print("[0, 1]: " + str(round(neural_network.feed_forward([0, 1])[0])))
+    print("[1, 0]: " + str(round(neural_network.feed_forward([1, 0])[0])))
 
-    # plot points and display graph
-    plt.plot(l1, "black")
-    plt.plot(l2, "black")
-    plt.plot(l3, "black")
-    plt.plot(l4, "black")
+    # Plot points and display graph
+    x = []
+    for i in range(epoch):
+        if i % (epoch / 100) == 0:
+            x.append(i)
+    plt.plot(x, l1, "black")
+    plt.plot(x, l2, "black")
+    plt.plot(x, l3, "black")
+    plt.plot(x, l4, "black")
     plt.show()
 
 
-# prints the progress bar for training data iterations
-def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
+# Prints the progress bar for training data iterations
+def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='O'):
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filled_length = int(length * iteration // total)
     bar = fill * filled_length + '-' * (length - filled_length)
-    print('\r%s [%s] %s%% %s' % (prefix, bar, percent, suffix), end='')
+    print('%s [%s] %s%% %s' % (prefix, bar, percent, suffix), end='\r')
     # Print New line on Complete
     if iteration == total:
         print()
 
 
-# displays the time from start_time to the time the function was called
+# Displays the time from start_time to the time the function was called
 def display_time(start_time):
     end_time = time.time()
     time_elapsed = end_time - start_time
